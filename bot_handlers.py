@@ -1,61 +1,71 @@
 from bot import bot
-from telebot.types import Message
+from telebot.types import Message, InputMediaPhoto
 import download_image
 import delete_image
-from buttons import *
-from datetime import datetime
 
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.send_message(message.chat.id, 'Привіт', reply_markup=keyboard_hello)
+    bot.send_message(message.chat.id, 'Привіт, обери команду щоб отримати прогноз погоди')
 
 
-@bot.message_handler(commands=['send_image'])
-def image_sending(message):
-    download_image.download_image()
-    photo = open('forecast.jpg', 'rb')
-    bot.send_photo(message.chat.id, photo)
-    photo.close()
-    delete_image.removing_image()
+@bot.message_handler(commands=['today'])
+def today_images(message):
+    send_images(message=message, day=0, text='Погода на сьогодні')
 
 
-@bot.message_handler(content_types=["text"])
-def text_answers(message: Message):
-    if message.text == "Прогноз на сьогодні":
-        download_image.download_images_of_day(0)
-        print("Images downloaded")
-        bot.send_message(message.chat.id, 'Ось погода на сьогодні:', reply_markup=keyboard_hello)
-        images_sending(message)
-        # for i in range(4):
-        #     try:
-        #         photo = open(str(i)+'.png', 'rb')
-        #         bot.send_photo(message.chat.id, photo)
-        #         photo.close()
-        #     except:
-        #         print("No such image "+str(i)+".png downloaded for sending")
-        # delete_image.removing_image()
-        # print("Images removed")
-    elif message.text == "Прогноз на завтра":
-        download_image.download_images_of_day(1)
-        print("Images downloaded")
-        bot.send_message(message.chat.id, 'Ось погода на завтра:', reply_markup=keyboard_hello)
-        images_sending(message)
+@bot.message_handler(commands=['tomorrow'])
+def tomorrow_images(message):
+    send_images(message=message, day=1, text='Погода на завтра')
 
 
+@bot.message_handler(commands=['in_1_day'])
+def in_1_day_images(message):
+    send_images(message=message, day=2, text='Погода на післязавтра')
 
 
+@bot.message_handler(commands=['in_2_days'])
+def in_2_days_images(message):
+    send_images(message=message, day=3, text='Погода на через 2 дні')
 
-def images_sending(message: Message):
+
+@bot.message_handler(commands=['in_3_days'])
+def in_2_days_images(message):
+    send_images(message=message, day=4, text='Погода на через 3 дні')
+
+
+@bot.message_handler(commands=['in_4_days'])
+def in_2_days_images(message):
+    send_images(message=message, day=5, text='Погода на через 4 дні')
+
+
+def send_images(message, day, text):
+    day = day
+    bot.send_message(message.chat.id, text)
+    download_image.download_images_of_day(day)
+
+    # t - осадки, gust - порывы ветра, h - влажность воздуха, o - осадки, c - облачность
+    weather_types = ['t', 'gust', 'h', 'o', 'c']
+
+    media = []
+    pictures_to_send = []
     for i in range(4):
         try:
-            photo = open(str(i) + '.png', 'rb')
-            bot.send_photo(message.chat.id, photo)
-            photo.close()
+            tmp_pic = open(str(i) + ".png", "rb")
+            pictures_to_send.append(tmp_pic)
+            if i == 0:
+                media.append(InputMediaPhoto(pictures_to_send[i], caption='Температура повітря'))
+            else:
+                media.append(InputMediaPhoto(pictures_to_send[i]))
         except:
-            print("No such image " + str(i) + ".png downloaded for sending")
+            print(str(i) + ".png not found for adding to album ")
+
+    bot.send_media_group(message.chat.id, media)
+
+    for image in pictures_to_send:
+        image.close()
+
     delete_image.removing_image()
-    print("Images removed")
 
 
 if __name__ == '__main__':

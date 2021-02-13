@@ -7,5 +7,5 @@ def removing_image():
             os.remove(str(i)+".png")
             print(str(i)+".png removed")
         else:
-            print("The "+str(i)+".png does not exist")
+            print(str(i)+".png does not exist for deleting")
 
