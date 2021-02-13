@@ -40,32 +40,38 @@ def in_2_days_images(message):
 
 
 def send_images(message, day, text):
+    weather_types = [['t', 'Температура повітря'],
+                     ['gust', 'Пориви вітру'],
+                     ['h', 'Вологість повітря'],
+                     ['o', 'Опади'],
+                     ['c', 'Хмарність']]
+
     day = day
     bot.send_message(message.chat.id, text)
-    download_image.download_images_of_day(day)
 
-    # t - осадки, gust - порывы ветра, h - влажность воздуха, o - осадки, c - облачность
-    weather_types = ['t', 'gust', 'h', 'o', 'c']
+    for type in weather_types:
+        media = []
+        pictures_to_send = []
+        download_image.download_images_of_day(day, weather_type=type[0])
+        for i in range(4):
+            try:
+                tmp_pic = open(str(i) + ".png", "rb")
+                pictures_to_send.append(tmp_pic)
+                if i == 0:
+                    media.append(InputMediaPhoto(pictures_to_send[i], caption=type[1]))
+                else:
+                    media.append(InputMediaPhoto(pictures_to_send[i]))
+            except:
+                print(str(i) + ".png not found for adding to album ")
 
-    media = []
-    pictures_to_send = []
-    for i in range(4):
-        try:
-            tmp_pic = open(str(i) + ".png", "rb")
-            pictures_to_send.append(tmp_pic)
-            if i == 0:
-                media.append(InputMediaPhoto(pictures_to_send[i], caption='Температура повітря'))
-            else:
-                media.append(InputMediaPhoto(pictures_to_send[i]))
-        except:
-            print(str(i) + ".png not found for adding to album ")
+        bot.send_media_group(message.chat.id, media)
 
-    bot.send_media_group(message.chat.id, media)
+        for image in pictures_to_send:
+            image.close()
 
-    for image in pictures_to_send:
-        image.close()
+        delete_image.removing_image()
 
-    delete_image.removing_image()
+    print('Done sending')
 
 
 if __name__ == '__main__':

@@ -4,28 +4,34 @@ import os
 from datetime import datetime
 
 
-def download_images_of_day(day):
+def download_images_of_day(day, weather_type):
 
     number_of_pics_today = number_of_today_pics()
 
     if day == 0:
         for i in range(1, number_of_pics_today+1):
-            download_image(str(i-1)+".png", "t-00"+str(i*6))
+            # download_image(str(i-1)+".png", "t-00"+str(i*6))
+            download_image(str(i - 1) + ".png", weather_type + "-00" + str(i * 6))
     elif day == 1:
         for i in range(1, 5):
-            download_image(str(i-1)+".png", "t-0"+str(number_of_pics_today*(i+1)*6))
+            # download_image(str(i-1)+".png", "t-0"+str(number_of_pics_today*(i+1)*6))
+            download_image(str(i - 1) + ".png", weather_type + "-0" + str(number_of_pics_today * (i + 1) * 6))
     elif day == 2:
         for i in range(1, 5):
-            download_image(str(i-1)+".png", "t-0"+str(24+number_of_pics_today*(i+1)*6))
+            # download_image(str(i-1)+".png", "t-0"+str(24+number_of_pics_today*(i+1)*6))
+            download_image(str(i - 1) + ".png", weather_type + "-0" + str(24 + number_of_pics_today * (i + 1) * 6))
     elif day == 3:
         for i in range(1, 5):
-            download_image(str(i-1)+".png", "t-"+pic_name_formatting(48+number_of_pics_today*(i+1)*6))
+            # download_image(str(i-1)+".png", "t-"+pic_name_formatting(48+number_of_pics_today*(i+1)*6))
+            download_image(str(i - 1) + ".png", weather_type + "-" + pic_name_formatting(48 + number_of_pics_today * (i + 1) * 6))
     elif day == 4:
         for i in range(1, 5):
-            download_image(str(i-1)+".png", "t-"+pic_name_formatting(72+number_of_pics_today*(i+1)*6))
+            # download_image(str(i-1)+".png", "t-"+pic_name_formatting(72+number_of_pics_today*(i+1)*6))
+            download_image(str(i - 1) + ".png", weather_type + "-" + pic_name_formatting(72 + number_of_pics_today * (i + 1) * 6))
     elif day == 5:
         for i in range(1, 5):
-            download_image(str(i-1)+".png", "t-"+pic_name_formatting(96+number_of_pics_today*(i+1)*6))
+            # download_image(str(i-1)+".png", "t-"+pic_name_formatting(96+number_of_pics_today*(i+1)*6))
+            download_image(str(i - 1) + ".png", weather_type + "-" + pic_name_formatting(96 + number_of_pics_today * (i + 1) * 6))
 
 
 def pic_name_formatting(number: int):
