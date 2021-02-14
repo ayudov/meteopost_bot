@@ -2,6 +2,7 @@ from bot import bot
 from telebot.types import Message, InputMediaPhoto
 import download_image
 import delete_image
+from download_image import get_update_info_from_website
 
 
 @bot.message_handler(commands=['start'])
@@ -11,32 +12,38 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['today'])
 def today_images(message):
-    send_images(message=message, day=0, text='Погода на сьогодні')
+    update_info = get_update_info_from_website()
+    send_images(message=message, day=0, text='Погода на сьогодні\n'+'_'+update_info+'_')
 
 
 @bot.message_handler(commands=['tomorrow'])
 def tomorrow_images(message):
-    send_images(message=message, day=1, text='Погода на завтра')
+    update_info = get_update_info_from_website()
+    send_images(message=message, day=1, text='Погода на завтра\n'+'_'+update_info+'_')
 
 
 @bot.message_handler(commands=['in_1_day'])
 def in_1_day_images(message):
-    send_images(message=message, day=2, text='Погода на післязавтра')
+    update_info = get_update_info_from_website()
+    send_images(message=message, day=2, text='Погода на післязавтра\n'+'_'+update_info+'_')
 
 
 @bot.message_handler(commands=['in_2_days'])
 def in_2_days_images(message):
-    send_images(message=message, day=3, text='Погода на через 2 дні')
+    update_info = get_update_info_from_website()
+    send_images(message=message, day=3, text='Погода на через 2 дні\n'+'_'+update_info+'_')
 
 
 @bot.message_handler(commands=['in_3_days'])
 def in_2_days_images(message):
-    send_images(message=message, day=4, text='Погода на через 3 дні')
+    update_info = get_update_info_from_website()
+    send_images(message=message, day=4, text='Погода на через 3 дні\n'+'_'+update_info+'_')
 
 
 @bot.message_handler(commands=['in_4_days'])
 def in_2_days_images(message):
-    send_images(message=message, day=5, text='Погода на через 4 дні')
+    update_info = get_update_info_from_website()
+    send_images(message=message, day=5, text='Погода на через 4 дні\n'+'_'+update_info+'_')
 
 
 def send_images(message, day, text):
@@ -47,7 +54,7 @@ def send_images(message, day, text):
                      ['c', 'Хмарність']]
 
     day = day
-    bot.send_message(message.chat.id, text)
+    bot.send_message(message.chat.id, text, parse_mode='markdown')
 
     for type in weather_types:
         media = []
