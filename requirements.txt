@@ -1,2 +1,4 @@
 pyTelegramBotApi
 beautifulsoup4
+flask
+gunicorn
