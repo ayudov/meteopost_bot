@@ -1,3 +1,6 @@
-TOKEN = '1155894307:AAEjdL7MGrYCM3NLdayfdc2PoLTrpRA_qkw'
-# APP_NAME = 'forecast_ukraine_bot'
-APP_NAME = 'ukraineforecast'
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+TOKEN = os.getenv('TOKEN')
+APP_NAME = 'ukraineforecast'  # имя приложения на HEROKU
