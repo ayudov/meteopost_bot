@@ -1,57 +1,67 @@
 from bot import bot
 from telebot.types import Message, InputMediaPhoto
+import os
+import tempfile
 import download_image
 import delete_image
 from download_image import get_update_info_from_website
 
 
 @bot.message_handler(commands=['start'])
-def send_welcome(message):
+def send_welcome(message: Message):
     bot.send_message(message.chat.id, 'Привіт, обери команду щоб отримати прогноз погоди')
 
 
 @bot.message_handler(commands=['today'])
-def today_images(message):
+def today_images(message: Message):
     update_info = get_update_info_from_website()
     send_images(message=message, day=0, text='Погода на сьогодні\n'+'_'+update_info+'_')
 
 
 @bot.message_handler(commands=['tomorrow'])
-def tomorrow_images(message):
+def tomorrow_images(message: Message):
     update_info = get_update_info_from_website()
-    send_images(message=message, day=1, text='Погода на завтра\n'+'_'+update_info+'_')
+    send_images(message=message, day=1, text='Погода на завтра\n' + '_' + update_info + '_')
 
 
 @bot.message_handler(commands=['in_1_day'])
-def in_1_day_images(message):
+def in_1_day_images(message: Message):
     update_info = get_update_info_from_website()
-    send_images(message=message, day=2, text='Погода на післязавтра\n'+'_'+update_info+'_')
+    send_images(message=message, day=2, text='Погода на післязавтра\n' + '_' + update_info + '_')
 
 
 @bot.message_handler(commands=['in_2_days'])
-def in_2_days_images(message):
+def in_2_days_images(message: Message):
     update_info = get_update_info_from_website()
-    send_images(message=message, day=3, text='Погода на через 2 дні\n'+'_'+update_info+'_')
+    send_images(message=message, day=3, text='Погода на через 2 дні\n' + '_' + update_info + '_')
 
 
 @bot.message_handler(commands=['in_3_days'])
-def in_2_days_images(message):
+def in_2_days_images(message: Message):
     update_info = get_update_info_from_website()
-    send_images(message=message, day=4, text='Погода на через 3 дні\n'+'_'+update_info+'_')
+    send_images(message=message, day=4, text='Погода на через 3 дні\n' + '_' + update_info + '_')
 
 
 @bot.message_handler(commands=['in_4_days'])
-def in_2_days_images(message):
+def in_2_days_images(message: Message):
     update_info = get_update_info_from_website()
-    send_images(message=message, day=5, text='Погода на через 4 дні\n'+'_'+update_info+'_')
+    send_images(message=message, day=5, text='Погода на через 4 дні\n' + '_' + update_info + '_')
 
 
-def send_images(message, day, text):
+def send_images(message: Message, day, text):
     weather_types = [['t', 'Температура повітря'],
                      ['gust', 'Пориви вітру'],
                      ['h', 'Вологість повітря'],
                      ['o', 'Опади'],
                      ['c', 'Хмарність']]
+
+    path = str(message.chat.id) + '_' + str(message.id)
+    try:
+        os.mkdir(path)
+    except OSError:
+        print("Creation of the directory %s failed" % path)
+    else:
+        print("Successfully created the directory %s " % path)
 
     day = day
     bot.send_message(message.chat.id, text, parse_mode='markdown')
@@ -59,10 +69,11 @@ def send_images(message, day, text):
     for type in weather_types:
         media = []
         pictures_to_send = []
-        download_image.download_images_of_day(day, weather_type=type[0])
+        download_image.download_images_of_day(day, weather_type=type[0], path=path)
+
         for i in range(4):
             try:
-                tmp_pic = open(str(i) + ".png", "rb")
+                tmp_pic = open(path + '/' + str(i) + ".png", "rb")
                 pictures_to_send.append(tmp_pic)
                 if i == 0:
                     media.append(InputMediaPhoto(pictures_to_send[i], caption=type[1]))
@@ -76,7 +87,14 @@ def send_images(message, day, text):
         for image in pictures_to_send:
             image.close()
 
-        delete_image.removing_image()
+        delete_image.removing_image(path)
+
+    try:
+        os.rmdir(path)
+    except OSError:
+        print("Deletion of the directory %s failed" % path)
+    else:
+        print("Successfully deleted the directory %s" % path)
 
     print('Done sending')
 

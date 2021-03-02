@@ -1,11 +1,11 @@
 import os
 
 
-def removing_image():
+def removing_image(path: str):
     for i in range(4):
-        if os.path.exists(str(i)+".png"):
-            os.remove(str(i)+".png")
-            print(str(i)+".png removed")
+        if os.path.exists(path + '/' + str(i)+".png"):
+            os.remove(path + '/' + str(i)+".png")
+            print(path + '/' + str(i)+".png removed")
         else:
-            print(str(i)+".png does not exist for deleting")
+            print(path + '/' + str(i)+".png does not exist for deleting")
 
